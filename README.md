@@ -129,11 +129,3 @@ If it still doesn't work then contact me with details and any error messages or 
    * Ends this program.
 
  - Press [Ctrl + C] at anytime to cancel
-
-
-### Info
-```
-ADB_Config.zip                  SHA-256: A5E35F132A269E206215CAF9AECDA1AAAF267E6D7A83A8B6E9C1626D82160BF6
-Auto_ADB_v1.0.0.beta.apk 	    SHA-256: F7FDC9DB6083CDA0B74810B9111604DC4316DB44449CA97BC0608668DB1D0309
-Auto ADB Device Fingerprint: 	A3:ED:D3:A7:62:9F:FE:27:A3:A3:79:2A:A6:B0:BA:40 - u#_a#@localhost
-```
