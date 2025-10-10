@@ -1,157 +1,134 @@
-# Auto_ADB (+ ADB_Config)
-An app that enables legacy ADB from within a device without user input + a tool (ADB Config) to help install the app and configure your device properly.
+# Auto ADB
+An app that enables persistent legacy ADB (port 5555) from within a device without user input.
+
+
+<br></br>
 
 > [!IMPORTANT]
-> I am currently rewriting the entire ADB backend to use native code instead of calling library binaries  
-> This will allow everything to be open source / transparent and easily compiled as well as give more fine grained control over the process  
-> This message will be removed once I release the updated version
+> V2 uses raw code and libraries instead of binaries blobs
+>- This allows everything to be open source / transparent / auditable and easily compiled as well as give more fine grained control over the process
+>
+> V2 would not be possible without some help from others:
+>- <a href="https://github.com/MuntashirAkon/libadb-android">MuntashirAkon LibADB Android</a> <-- This is a very useful library including its dependence and other repos by MuntashirAkon
+>- <a href="https://play.google.com/store/apps/details?id=dev.vodik7.tvquickactions">tvQuickActions Pro by tvDev</a> <-- tvDev kindly gave me a hint on how to do on-device pairing  
+   >  tvQuickActions is an awesome app and you should check it out (I am not affiliated in any way)
+   >
+   >  I am hoping to get the source code tidied and commented a bit better very soon and will push it to this repo
+   >  
+   >  Please Note:  
+   >  I am in no way an Android developer and I pieced this together with ideas from other peoples hard work so please don't be upset at any of the code, it works for me and I am sharing it to hopefully help others, If you can improve it please do so.  
+   >  Also feel free to add any suggestions for improvements.
+
+<br></br>
+
+
+## Screenshots
+<p align="left">
+<a href=".info/icon_v1.0.0.beta.png"><img src=".info/icon_v1.0.0.beta.png?raw=true" width="150" alt="Icon"></a>  
+&emsp;&emsp;&emsp;<a href=".info/Allow.png"><img src=".info/Allow.png?raw=true" width="50%" alt="Icon"></a>  
+</p>
+<a href=".info/main_v2.0.0.beta.png"><img src=".info/main_v2.0.0.beta.png?raw=true" width="90%" alt="Icon"></a>  
+
+
+## Download
+All apks can be found under releases:
+https://github.com/nozza87/Auto_ADB/releases
+
+Otherwise you can compile yourself from source (once available)
+
 
 ## Setup Instructions
 
 if at any point you get errors, re-read this and try again or reboot your device and start again from step 1.  
-If it still doesn't work then contact me with details and any error messages or logs.
+If it still doesn't work then open an issue <a href="https://github.com/nozza87/Auto_ADB/issues">here</a> with as many details and any error messages or logs.
 
-("ADB Config" is optional and all of the commands below can be run manually via ADB commands if you want to [see "same as" sections below])  
-("ADB Config" just makes this much easier at will auto discover IP addresses and ports and run the commands to the correct device)
 
-1. Extract "ADB_Config.zip" to a folder somewhere on your PC  
-	ADB binaries are included in the ADB folder, feel free to replace with your own {tested using Android Debug Bridge version 1.0.41 [Version 36.0.0-13206524]}  
-		(https://developer.android.com/tools/releases/platform-tools)
 
-2. On your Android device go to 'Developer options' and enable both 'Wireless debugging' and 'USB Debugging' if they exist
+
+1. On your Android device go to 'Settings -> Developer options' and enable both 'Wireless debugging' and 'USB Debugging'. (if they exist)
    >(select [Always Allow] if prompted on your device)
 
-4. Run "ADB_Config.exe"  
-	Press [h]' then [ENTER] to see the help prompt. (Also at bottom of this file)
+2. On your Android device open "Auto ADB" and make sure both 'USB Debugging' and 'Wireless Debugging' toggles are on.
+   >Check the toggle states (this will confirm everything is working)
 
-5. Press [ENTER] or press [f] then [ENTER] to discover ADB devices (This will confirm everything is working)
+3. On your Android device in 'Auto ADB' press '[ENABLE LEGACY ADB]'
 
-6. Press [Control+C] to go back to the main menu of "ADB Config" then press [p] then [ENTER] to enter pairing mode.  
-	This is the same as:  
-		```ADB pair -code-```
+4. On your Android device go to 'Settings -> Accessibility -> Auto ADB Pairing Code Reader -> Enable'
+   > (select [OK] if prompted on your device)
 
-7. On your Android device go to 'Developer options -> Wireless debugging -> Pair device with pairing code'
+5. On your Android device go back to 'Auto ADB' press '[ENABLE LEGACY ADB] again'
+
+6. On your Android device go to 'Settings -> Developer options -> Wireless debugging -> Pair device with pairing code'
    > (select [Always Allow] if prompted on your device)
 
-9. Enter the pairing code into "Auto ADB" and press [ENTER]
+7. On your Android device once you see "Pairing code found" go back to 'Auto ADB' press '[ENABLE LEGACY ADB] again'
+   > (You can check you are paired under 'Settings -> Developer options -> Wireless debugging -> PAIRED DEVICES' you should see "nozza87@Auto-ADB")
 
-10. Press [I] then [ENTER] to install the "Auto ADB" app on your device
-    > (Select "Auto_ADB_v1.0.0.beta.apk" when prompted)
-   	> {This will also grant the 'WRITE_SECURE_SETTINGS' and 'SYSTEM_ALERT_WINDOW' permissions.}
-    
-	This is the same as:  
-   		```ADB connect ip:port```  
-		```ADB install "path_to_app.apk"```  
-		```ADB shell pm grant au.com.inoahguy.autoADB android.permission.WRITE_SECURE_SETTINGS```  
-	> {This allows "Auto ADB" to turn on 'USB Debugging' and 'Wireless Debugging'}
- 
-	```ADB shell pm grant au.com.inoahguy.autoADB android.permission.SYSTEM_ALERT_WINDOW```  
-	> {This allows "Auto ADB" to run it's main activity on boot without user interaction}  
-	> {The above command can also be done via the ui: go to 'settings' -> 'apps' -> 'special app access' -> 'display over other apps' and turn on 'Auto ADB'}  
+8. On your Android device while still in 'Auto ADB' check the info window for current adb connections (you should be connected to both wireless & legacy adb)
 
-12. On your Android device open "Auto ADB" and make sure both 'USB Debugging' and 'Wireless Debugging' toggles are on, Do NOT touch anything else yet!
-    > (select [Always Allow] if prompted on your device)
+9. {Optional} If you device support USB debugging then on your Android device in 'Auto ADB' press (or via developer settings) 'disable "Wireless Debugging" once legacy is enabled'
+   > (Wireless debugging is no longer needed)
 
-14. Press [L] then [ENTER] to enable legacy mode on your Android device (port 5555)
-    > (select [Always Allow] if prompted on your device)
-    
-	This is the same as:  
-		```ADB connect ip:port```  
-		```ADB tcpip 5555```  
+10. If everything is ok up until this point then you can enable "Start 'Auto ADB' on system boot" & "[ENABLE LEGACY ADB] when opening the app"
+> These aren't required if you are happy to open the app and manually run '[ENABLE LEGACY ADB]' to re-enable legacy ADB (port 5555) after a reboot.
 
-16. On your Android device in 'Auto ADB' press '[CONNECT LOCAL ADB]'
-    > (select [Always Allow] if prompted on your device)
+11. All going well your device should now have legacy ADB running on port 5555 and should automatically re-enable it after a reboot
+> You should never need to repeat these steps unless pairing or wireless debugging on your network is revoked
 
-18. If everything is ok up until this point then you can enable "[CONNECT LOCAL ADB] when opening the app" and "Start 'Auto ADB' on system boot"  
-	These aren't required if you are happy to open the app and manually run '[CONNECT LOCAL ADB]' to re-enable legacy ADB (port 5555)  
+12. Profit?
 
-19. All going well your device should now have legacy ADB running on port 5555 and should automatically enable it ater a reboot  
-	Profit?
 
 ## Notes
 
-* When using another app for the ADB client, beware that the ADB daemon (server) only starts if it's not *already running*, so this can cause conflicts with the embedded client in "Auto ADB" (if tcpip mode is activated), and the other app, since the authorized keys will **only** be loaded by the client that starts the ADB daemon, which can cause connection issues.
-
-* The ADB daemon can be killed using 'ADB kill-server'.
-
 * Since the ADB TLS port is random each time, mDNS discovery is used in order to detect it within the app, if your network blocks this, this tool won't work.
 
-* The 'legacy' mode, which allows unauthorized connections with an on-device prompt, needs an external device on the same network to set up for the first time, so that the embedded ADB client can be allowed to enable the mode by itself in the future.
+* The 'legacy' mode, which allows unauthorized connections with an on-device prompt, needs to be paired to set up for the first time, so that the embedded ADB client can be allowed to enable the mode by itself in the future.
+
+* ADB Device Fingerprint: 81:66:b5:ee:c8:b3:30:7f:2f:eb:a0:02:67:c1:4f:72 - nozza87@Auto-ADB
+
+* This app was designed and tested for Android TV but should work on other devices.
+
+* The text on the left side of the app will change colour to signal its state:  
+  🟩 - Green means this permission / option is in the right state  
+  🟨 - Yellow means this permission / option is the wrong state but isn't required  
+  🟥 - Red means this permission / option is in thw wrong state
 
 
 ## Flow
 
 ```mermaid
 sequenceDiagram
-    participant Computer
-    participant Android Device
-    participant Legacy Device
-    
-    note over Android Device: Manually Enable ADB
-    note over Android Device: Accept System Popup(s) if any
-    note over Android Device: Enter Pairing mode
-    Computer->>Android Device: Pair to Device
-    Computer->>Android Device: Connect to Device
-    note over Android Device: Accept System Popup(s) if any
-    Computer->>Android Device: Install "Auto_ADB"
-    Computer->>Android Device: Set "Auto_ADB" permissions
-    loop: Repeat from here once initial config complete after reboot
-    note over Android Device: Auto Run on boot if enabled
-    Computer-->>Android Device: Run 'Auto ADB'
-    note right of Computer: Only needs to be done<br>from Computer<br>for intial setup
-    note over Android Device: Accept System Popup(s) if any
-    Computer-->>Android Device: Enable Legacy ADB
-    note right of Computer: Only needs to be done<br>from Computer<br>for intial setup
-        Legacy Device->>Android Device: Connect devices via legacy ADB
-        note over Android Device: Accept System Popup(s) if any
-    end 
+   participant ADB as Auto ADB<br>App
+   participant AD as Android<br>Device
+   participant LD as Legacy<br>Device
+   LD --x AD: Legacy Device cannot connect
+   Note over AD: Manually Enable ADB<br>(both usb & wireless)
+   Note over AD: Accept System Popup(s) if any (Always Allow)
+   AD ->> ADB: Open "Auto ADB"
+   ADB ->> AD: Press [ENABLE LEGACY ADB]
+   Note over AD: 'Settings -> Accessibility -> Auto ADB Pairing Code Reader -> Enable'
+   Note over AD: Select [OK] if prompted
+   AD ->> ADB: Go back to  "Auto ADB"
+   ADB ->> AD: Press [ENABLE LEGACY ADB]
+   Note over AD: 'Settings -> Developer options -> Wireless debugging -> Pair device with pairing code'
+   Note over AD: Accept System Popup(s) if any (Always Allow)
+   AD ->> AD: Wait for "Pairing code found" toast
+   Note over AD: Check Auto ADB is paired<br>'Settings -> Developer options -> Wireless debugging -> PAIRED DEVICES'<br>you should see "nozza87@Auto-ADB"
+   AD ->> ADB: Go back to  "Auto ADB"
+   Note over ADB: Check the info window for current adb connections<br>(you should be connected to both wireless & legacy adb)<br>Legacy adb was auto enabled after pairing
+   Note over ADB: All permissions should now be green as they were also auto enabled afer pairing
+   LD ->> AD: Connect devices via legacy ADB
+   Note over AD: Accept System Popup(s) if any
+   opt Disable Wireless Debugging
+      Note over ADB: If you device supports USB debugging then select<br>'disable "Wireless Debugging" once legacy is enabled'<br>(Wireless debugging is no longer needed)
+      Note over ADB: If everything is ok up until this point then you can enable<br>"Start 'Auto ADB' on system boot" &<br>"[ENABLE LEGACY ADB] when opening the app"<br>These aren't required if you are happy to open the app and manually run<br>'[ENABLE LEGACY ADB]' to re-enable legacy ADB (port 5555) after a reboot.
+      ADB ->> AD: Close Auto ADB
+   end
+   loop : Repeat from here once initial config complete after reboot
+      AD ->> ADB: "Auto ADB" will run on boot if enabled<br>otherwise open "Auto ADB"
+      ADB ->> AD: [ENABLE LEGACY ADB] will be pressed automatically if enabled<br>otherwise Press [ENABLE LEGACY ADB]
+      Note over AD: Accept System Popup(s) if any<br>(shouldn't be)
+      LD ->> AD: Connect devices via legacy ADB
+      Note over AD: Accept System Popup(s) if any
+   end
 ```
-
-## ADB Config Commands (same as [H]elp)
-
- - [F]ind:  
-   * This will display any ADB devices found on the local network.  
-   * This will run indefinitely, usefull for checking what state a device is in.
-
- - [S]how:  
-   * This will show all currently connected ADB devices.
-
- - [D]isconnect:  
-   * This will disconnect all currently connected ADB devices.
-
- - [P]air:  
-   * This will Pair a TLS pairing device to this computer on this network using its Wi-Fi pairing code.  
-   * This must be done before you can connect or restore to legacy.  
-   * This is only required once per device per network unless revoked.  
-
- - [C]onnect:  
-   * This will Connect a TLS device to this computer after it has been paired.  
-   * This is required again after every device reboot or if revoked.  
-
- - [I]nstall:  
-   * This will Install 'Auto ADB' to a connected device.  
-   * This will also grant the 'WRITE_SECURE_SETTINGS' and 'SYSTEM_ALERT_WINDOW' permissions.  
-
- - [U]install:  
-   * This will Uninstall 'Auto ADB' from a connected device.
-
- - [G]rant:  
-   * This will grant the 'WRITE_SECURE_SETTINGS' and 'SYSTEM_ALERT_WINDOW' permissions that are required for 'Auto ADB' to run
-
- - [L]egacy:  
-   * This will automatically restore a TLS device to a Legacy TCP connection so existing software can connect without anything extra.  
-   * This is required again after every device reboot or if revoked.
-
- - [K]ill:  
-   * This will kill the ADB server process  
-   * This will disconnect all currently connected ADB devices.  
-   * Try this if you are having connection issues.  
-   Note: The next start-up of this program will be delayed by a few seconds.
-
- - [H]elp:  
-   * You've already figured this one out :)
-
- - [E]xit:  
-   * Ends this program.
-
- - Press [Ctrl + C] at anytime to cancel
