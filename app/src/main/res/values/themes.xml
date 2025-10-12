@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.AutoADB" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorSurface">@color/cardview_dark_background</item>
+        <item name="colorOnSurface">@color/white</item>
+    </style>
+    <style name="CheckboxStyle" >
+        <item name="colorControlNormal">@color/green_700</item>
+        <item name="colorAccent">@color/green_700</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="SwitchStyle" >
+        <item name="android:thumbTint">@color/green_700</item>
+        <item name="android:trackTint">@color/green_200</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

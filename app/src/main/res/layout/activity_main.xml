@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1F2126"
+    tools:context=".MainActivity"
+    tools:ignore="TouchTargetSizeCheck,TextContrastCheck,ButtonStyle,HardcodedText,UseSwitchCompatOrMaterialXml">
+    <TextView
+        android:id="@+id/txtCredits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="12dp"
+        android:focusable="false"
+        android:focusableInTouchMode="true"
+        android:text="@string/credits"
+        android:textColor="@color/gray_300"
+        android:textColorLink="@color/green_200"
+        android:textSize="8sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="SmallSp"
+        android:elevation="999dp" >
+    </TextView>
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:text="@string/app_name"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textColor="@color/green_700"
+        android:textSize="40sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" >
+    </TextView>
+    <LinearLayout
+        android:id="@+id/layoutStatus"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:maxHeight="55dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/layoutMain"
+        android:background="@drawable/rounded_border" >
+        <TextView
+            android:id="@+id/txtStatusTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="STATUS"
+            android:textAlignment="center"
+            android:textColor="@color/white" >
+        </TextView>
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="Ready"
+            android:textAlignment="center"
+            android:textColor="@color/green_200"
+            android:textColorHighlight="@color/green_500" >
+        </TextView>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layoutMain"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/layoutStatus"
+        app:layout_constraintBottom_toTopOf="@id/layoutInfo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/rounded_border"
+        android:baselineAligned="false"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" >
+        <LinearLayout
+            android:layout_width="10dp"
+            android:minWidth="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2">
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_marginTop ="0dp"
+            android:layout_marginBottom ="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd ="0dp"
+            android:gravity="start"
+            android:minWidth="100dp"
+            android:orientation="vertical"
+            tools:ignore="TextSizeCheck" >
+            <LinearLayout
+                android:id="@+id/layoutToggles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="start"
+                android:orientation="vertical">
+                <Switch
+                    android:id="@+id/swiUsbDebugEnabled"
+                    android:theme="@style/SwitchStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="false"
+                    android:minWidth="260dp"
+                    android:minHeight="48dp"
+                    android:nextFocusDown="@id/swiWirelessDebugEnabled"
+                    android:text="USB debugging"
+                    android:textColor="@color/green_500" >
+                </Switch>
+                <TextView
+                    android:id="@+id/txtUsbDebugDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-12dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="- Allows legacy debugging (IP and USB)"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp">
+                </TextView>
+                <Switch
+                    android:id="@+id/swiWirelessDebugEnabled"
+                    android:theme="@style/SwitchStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="false"
+                    android:minWidth="260dp"
+                    android:minHeight="48dp"
+                    android:nextFocusUp="@id/swiUsbDebugEnabled"
+                    android:nextFocusDown="@id/btnEnableLegacyADB"
+                    android:text="Wireless debugging"
+                    android:textColor="@color/green_500" >
+                </Switch>
+                <TextView
+                    android:id="@+id/txtWirelessDebugDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-12dp"
+                    android:text="- Allows wireless debugging (only required once unless revoked)"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp">
+                </TextView>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/txtWriteSecure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Permission: Write Secure Settings "
+                android:textColor="@color/gray_500">
+            </TextView>
+            <TextView
+                android:id="@+id/txtWriteSecureDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="- Allows &quot;Auto ADB&quot; to control debugging toggles"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                tools:ignore="SmallSp">
+            </TextView>
+            <TextView
+                android:id="@+id/txtDisplayOver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Permission: Display over other apps"
+                android:textColor="@color/gray_500">
+            </TextView>
+            <TextView
+                android:id="@+id/txtDisplayOverDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="- Allows &quot;Auto ADB&quot; to properly run on startup"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                tools:ignore="SmallSp">
+            </TextView>
+            <TextView
+                android:id="@+id/txtAccessibilityService"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accessibility: Pairing Service"
+                android:textColor="@color/gray_500">
+            </TextView>
+            <TextView
+                android:id="@+id/txtAccessibilityServiceDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="- Allows wireless pairing on device (only required once unless revoked)"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                tools:ignore="SmallSp">
+            </TextView>
+            <TextView
+                android:id="@+id/txtAutoRevoke"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Permission: Remove permissions and free up space"
+                android:textColor="@color/gray_500">
+            </TextView>
+            <TextView
+                android:id="@+id/txtAutoRevokeDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="- Must be disabled to prevent &quot;Auto ADB&quot; losing permissions"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                tools:ignore="SmallSp">
+            </TextView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop ="0dp"
+            android:layout_marginBottom ="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd ="0dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_weight="3" >
+            <LinearLayout
+                android:id="@+id/layoutBtns"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                style="?android:attr/buttonBarStyle" >
+                <Button
+                    android:id="@+id/btnEnableLegacyADB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="200dp"
+                    android:minHeight="48dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="false"
+                    android:nextFocusUp="@id/swiWirelessDebugEnabled"
+                    android:nextFocusDown="@id/btnDevOptions"
+                    android:text="Enable Legacy ADB"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_focused" >
+                    <requestFocus />
+                </Button>
+                <Button
+                    android:id="@+id/btnDevOptions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:minWidth="200dp"
+                    android:minHeight="48dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="false"
+                    android:nextFocusUp="@id/btnEnableLegacyADB"
+                    android:nextFocusDown="@id/chkAutoStartEnabled"
+                    android:text="Developer options"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_focused" >
+                </Button>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutChecks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+                    <CheckBox
+                        android:id="@+id/chkAutoStartEnabled"
+                        android:theme="@style/CheckboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:nextFocusUp="@id/btnDevOptions"
+                        android:nextFocusDown="@id/chkAutoRunEnabled"
+                        android:text="Start 'Auto ADB'\non system boot"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"
+                        android:thumbTint="#006007"
+                        android:trackTint="@color/green_200">
+                    </CheckBox>
+                    <CheckBox
+                        android:id="@+id/chkAutoRunEnabled"
+                        android:theme="@style/CheckboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:nextFocusUp="@id/chkAutoStartEnabled"
+                        android:nextFocusDown="@id/chkAutoDisableWireless"
+                        android:text="[ENABLE LEGACY ADB]\nwhen opening the app"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"
+                        android:thumbTint="#006007"
+                        android:trackTint="@color/green_200" >
+                    </CheckBox>
+                    <CheckBox
+                        android:id="@+id/chkAutoDisableWireless"
+                        android:theme="@style/CheckboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:nextFocusUp="@id/chkAutoRunEnabled"
+                        android:nextFocusDown="@id/chkAutoRefresh"
+                        android:text="Disable &quot;Wireless debugging&quot;\nonce legacy is enabled"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"
+                        android:thumbTint="#006007"
+                        android:trackTint="@color/green_200">
+                    </CheckBox>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+                    <CheckBox
+                        android:id="@+id/chkAutoRefresh"
+                        android:theme="@style/CheckboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:nextFocusUp="@id/btnDevOptions"
+                        android:nextFocusDown="@id/chkAutoClose"
+                        android:text="&quot;Refresh Info&quot;\nwhen opening the app"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"
+                        android:thumbTint="#006007"
+                        android:trackTint="@color/green_200">
+                    </CheckBox>
+                    <CheckBox
+                        android:id="@+id/chkAutoClose"
+                        android:theme="@style/CheckboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:nextFocusUp="@id/chkAutoRefresh"
+                        android:nextFocusDown="@id/chkAutoDisableWireless"
+                        android:text="Close 'Auto ADB'\nonce legacy is enabled"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"
+                        android:thumbTint="#006007"
+                        android:trackTint="@color/green_200">
+                    </CheckBox>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layoutInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-20dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/layoutMain"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/rounded_border" >
+        <TextView
+            android:id="@+id/txtInfoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="INFO:"
+            android:textAlignment="viewStart"
+            android:textColor="@color/white" >
+        </TextView>
+        <TextView
+            android:id="@+id/txtInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="Waiting"
+            android:textAlignment="viewStart"
+            android:textColor="@color/green_200"
+            android:textColorHighlight="@color/green_500" >
+        </TextView>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

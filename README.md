@@ -9,11 +9,11 @@ An app that enables persistent legacy ADB (port 5555) from within a device witho
 >- This allows everything to be open source / transparent / auditable and easily compiled as well as give more fine grained control over the process
 >
 > V2 would not be possible without some help from others:
->- <a href="https://github.com/MuntashirAkon/libadb-android">MuntashirAkon LibADB Android</a> <-- This is a very useful library including its dependence and other repos by MuntashirAkon
+>- <a href="https://github.com/MuntashirAkon/libadb-android">MuntashirAkon LibADB Android</a> <-- This is a very useful library including its dependencies and other repos by MuntashirAkon
 >- <a href="https://play.google.com/store/apps/details?id=dev.vodik7.tvquickactions">tvQuickActions Pro by tvDev</a> <-- tvDev kindly gave me a hint on how to do on-device pairing  
    >  tvQuickActions is an awesome app and you should check it out (I am not affiliated in any way)
    >
-   >  I am hoping to get the source code tidied and commented a bit better very soon and will push it to this repo
+   >  Thanks to some idiot making me not want to share this the source code is not tidied or commented a bit better but here it is, at least it is public now though I guess?
    >  
    >  Please Note:  
    >  I am in no way an Android developer and I pieced this together with ideas from other peoples hard work so please don't be upset at any of the code, it works for me and I am sharing it to hopefully help others, If you can improve it please do so.  
@@ -34,7 +34,7 @@ An app that enables persistent legacy ADB (port 5555) from within a device witho
 All apks can be found under releases:
 https://github.com/nozza87/Auto_ADB/releases
 
-Otherwise you can compile yourself from source (once available)
+Otherwise you can compile yourself from source
 
 
 ## Setup Instructions
