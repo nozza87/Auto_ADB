@@ -12,8 +12,6 @@ An app that enables persistent legacy ADB (port 5555) from within a device witho
 >- <a href="https://github.com/MuntashirAkon/libadb-android">MuntashirAkon LibADB Android</a> <-- This is a very useful library including its dependencies and other repos by MuntashirAkon
 >- <a href="https://play.google.com/store/apps/details?id=dev.vodik7.tvquickactions">tvQuickActions Pro by tvDev</a> <-- tvDev kindly gave me a hint on how to do on-device pairing  
    >  tvQuickActions is an awesome app and you should check it out (I am not affiliated in any way)
-   >
-   >  Thanks to some idiot making me not want to share this the source code is not tidied or commented a bit better but here it is, at least it is public now though I guess?
    >  
    >  Please Note:  
    >  I am in no way an Android developer and I pieced this together with ideas from other peoples hard work so please don't be upset at any of the code, it works for me and I am sharing it to hopefully help others, If you can improve it please do so.  
@@ -27,7 +25,7 @@ An app that enables persistent legacy ADB (port 5555) from within a device witho
 <a href=".info/icon_v1.0.0.beta.png"><img src=".info/icon_v1.0.0.beta.png?raw=true" width="150" alt="Icon"></a>  
 &emsp;&emsp;&emsp;<a href=".info/Allow.png"><img src=".info/Allow.png?raw=true" width="50%" alt="Icon"></a>  
 </p>
-<a href=".info/main_v2.0.0.beta.png"><img src=".info/main_v2.0.0.beta.png?raw=true" width="90%" alt="Icon"></a>  
+<a href=".info/main_v2.2.0.beta.png"><img src=".info/main_v2.2.0.beta.png?raw=true" width="90%" alt="Icon"></a>  
 
 
 ## Download
