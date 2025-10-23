@@ -21,7 +21,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- required permissions to run the foreground service -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:ignore="ForegroundServicesPolicy" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     
     <!-- required permissions to run the foreground service from boot completed -->
@@ -76,7 +77,8 @@
         </receiver>
 
         <!-- Foreground Service Declaration -->
-        <service android:name=".BootForegroundService" android:exported="false" android:foregroundServiceType="specialUse" />
+        <service android:name=".BootForegroundService" android:enabled="true" android:exported="false" android:foregroundServiceType="specialUse" />
+        <service android:name=".PairWebService" android:enabled="true" android:exported="false" android:foregroundServiceType="dataSync" />
 
         <!-- Pairing Accessibility Service Declaration -->
         <service

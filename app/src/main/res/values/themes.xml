@@ -12,6 +12,6 @@
     <style name="SwitchStyle" >
         <item name="android:thumbTint">@color/green_700</item>
         <item name="android:trackTint">@color/green_200</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 </resources>

@@ -4,129 +4,223 @@ package au.com.inoahguy.autoadb
 
 import android.content.Context
 import android.os.Build
+import android.sun.security.x509.*
 import android.util.Log
 import io.github.muntashirakon.adb.AbsAdbConnectionManager
-import java.io.ByteArrayInputStream
-import java.io.InputStream
-import java.nio.charset.StandardCharsets
-import java.security.KeyFactory
-import java.security.PrivateKey
+import java.io.File
+import java.io.IOException
+import java.security.*
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 import java.security.spec.PKCS8EncodedKeySpec
-import java.util.Base64
+import java.security.spec.X509EncodedKeySpec
+import java.util.Date
+import java.util.Random
 
-class AdbConnectionManager private constructor(@Suppress("unused") context: Context) : AbsAdbConnectionManager() {
-    @Suppress("PropertyName")
-    val TAG = "AdbConnectionManager"
-
-    private val mPrivateKey: PrivateKey
-    private val mCertificate: Certificate
-
-    // Feel free to change the private key
-    init {
-        Log.d(TAG, "Initializing AdbConnectionManager")
-        api = Build.VERSION.SDK_INT
-        val privateKeyString = "-----BEGIN PRIVATE KEY-----\n" +
-                "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDi5Hh6GEGjQts4\n" +
-                "hBnfIa3Y6uMqXsIeBLBqbY7KsIGx6czLohVYC235DFk0/c+8HSymF53tmmkO9tcv\n" +
-                "6f1PwiQF5hW+1mcZvMRZHdVR66I64WKFJOgm+BXu12bX4ViZbfnq2SNVeGIo6gPw\n" +
-                "PufyMkkWTHSX6ZmtXN3HZVaEFj8ArLsQCnwdSGegOZArrX/FFkUYUflYAOWmHUHw\n" +
-                "huDhEXk3OCOMN6EJyPD6qo73TVDDnTk50yiMVfz1YI/IL5XVzE0yo3lq/Kss6C71\n" +
-                "+q4/m8Ss8nOdbg2u2FhGnD9C2pgRykeXyhF4L0YZeVtDs7HRP28kf02jcOUdM1aU\n" +
-                "4AEDeKmNAgMBAAECggEACKBCkq2/fotDSkXnb+YGe8PFnUUsiU7OmmPILzSjVJA2\n" +
-                "6g8u9keMPByPTPHczNZ67ariGYOqjgat9rBrFmpo+evjwx4d45xJ70TfC9MhgAt6\n" +
-                "k1mPQ+0aXRfRRefup8teK7Q8eFeeu2JLU5VXNmlZdeZuUIdOjRS0W3TRby1R4oG/\n" +
-                "M/bSZSGJoMYEQZgD0DdqtT+qPZJcbLVVnsW9z6NgDPTdRtOzTs04Ywpx/hnQ59Ea\n" +
-                "27mZ+kcckfCYzQ0F6kQpUp+Z+8uYKOScQQWobXtpfyYmQFGKwnU5tAmFxCuc0q2Y\n" +
-                "QepneZehXCX9Y91j/ifqmaOtOGsRXKcg4LrGcMbX9wKBgQD9dU/bQBDl1Zq2916E\n" +
-                "7wvkNoZG59fVkYc3ZUVXycN3aXXZsYyagCT36xx/cMHECak3L7DQLqH0ZVEkH5tH\n" +
-                "XUbZ1vgjKpU85JVdmapvwqe7q4f++pkPM9k6qAL6yhL6b7wbxOSjteAg52Yshpq9\n" +
-                "i7HduA9KDY8rwPnX1ecEtu8hrwKBgQDlKvU7LvsxK2uGIx4SuCfAtT2ReqrZfMMf\n" +
-                "QUGKeysWOuSRS0jF2+1x1H+EynmWVo9KOfwsTPJRTSRFlxC0+MlhMbgxRhWabCFw\n" +
-                "KLPCJGcsUzbfoVXdyxj9tDxzzIxs9mPSKJVb8AxUBNqyUcA4UAFI3/JQg3S7y0xZ\n" +
-                "tiFOF9ijgwKBgCEX6SZadhpcSogrQlcfEzFoAR5O9Tp4duw/t88fk/sKdQ3IhfBC\n" +
-                "XRFVzHHDWjlrfYGsI2z7OcA8XlzWF6M4xaB51gpZbAT4X5xKDRvskZQKcIZVWBjJ\n" +
-                "D0r+Vu1B5zp1zlzd13Cctbf2HrwfkyK+k6m8d5qWrKPs3XJWBoTyEcUXAoGACKIu\n" +
-                "rPUfJ4IQQfRuvJvNe5gYYrOxXhIyM6o8st/jBqpfVA33BuU7M8+iojkSjZRjP5Oh\n" +
-                "qXWYp3F1jV2cloTM6Wl7G/gc9j1eoSAXbZf7fxL/fTtRxdJR9bTlliM9oxlBN3ip\n" +
-                "79XCUSQBrTghOr3g3oL5WQkqy6xkCvkulgeV9MsCgYBxz+XCT2uuSTX+FfkGImVJ\n" +
-                "QOn5kEFnGRvEAtuchaVAvR7xlhJYB0i3iCG5MoIJHTAenSX26a3SRipQy1GstEZY\n" +
-                "72rTIx6JDgysJpx/QyqLdlHFXFQ3AIerIT2rbYyhjExDZyJ4VGA4Ltsh8Um8W3IS\n" +
-                "1PE3Au9KrURPRcSDj9fwPA==\n" +
-                "-----END PRIVATE KEY-----\n"
-
-        mPrivateKey = try {
-            loadPrivateKeyFromString(privateKeyString)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to load private key", e)
-            throw e
-        }
-
-        // Feel free to change the certificate
-        val pemCert = "-----BEGIN CERTIFICATE-----\n" +
-                "MIIDfzCCAmegAwIBAgIUFZ9cxlKtnlMwhp+SF0JNen1SuAkwDQYJKoZIhvcNAQEL\n" +
-                "BQAwaDELMAkGA1UEBhMCQVUxDDAKBgNVBAgTA1FMRDETMBEGA1UEBxMKR29sZCBD\n" +
-                "b2FzdDERMA8GA1UEChMIaU5vYWhHdXkxEDAOBgNVBAsTB05venphODcxETAPBgNV\n" +
-                "BAMTCEF1dG8gQURCMB4XDTI1MDkyMTEwNDEzMloXDTQ1MDkxNjEwNDEzMlowaDEL\n" +
-                "MAkGA1UEBhMCQVUxDDAKBgNVBAgTA1FMRDETMBEGA1UEBxMKR29sZCBDb2FzdDER\n" +
-                "MA8GA1UEChMIaU5vYWhHdXkxEDAOBgNVBAsTB05venphODcxETAPBgNVBAMTCEF1\n" +
-                "dG8gQURCMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4uR4ehhBo0Lb\n" +
-                "OIQZ3yGt2OrjKl7CHgSwam2OyrCBsenMy6IVWAtt+QxZNP3PvB0sphed7ZppDvbX\n" +
-                "L+n9T8IkBeYVvtZnGbzEWR3VUeuiOuFihSToJvgV7tdm1+FYmW356tkjVXhiKOoD\n" +
-                "8D7n8jJJFkx0l+mZrVzdx2VWhBY/AKy7EAp8HUhnoDmQK61/xRZFGFH5WADlph1B\n" +
-                "8Ibg4RF5NzgjjDehCcjw+qqO901Qw505OdMojFX89WCPyC+V1cxNMqN5avyrLOgu\n" +
-                "9fquP5vErPJznW4NrthYRpw/QtqYEcpHl8oReC9GGXlbQ7Ox0T9vJH9No3DlHTNW\n" +
-                "lOABA3ipjQIDAQABoyEwHzAdBgNVHQ4EFgQUieINH0sQPaX+T2Tu7XskhZUIeOYw\n" +
-                "DQYJKoZIhvcNAQELBQADggEBANpRXbDWOD7mwPqaEiQGvbhQVMmJbdUy9uw7bd8y\n" +
-                "FLP48HS67D4z0RsbDJHYSh1rzA0XOU2Kz1J7GxgDCaAYbSGe2pzUiUAxN75h+ZOi\n" +
-                "GCuHKMELNuCh6DXeTb0GNQyH4Kh0rN9gQcoAEF7I1CIEy9U+lPkiC29kvb7oufVx\n" +
-                "OTewXbTKYp9ETupr7GI6qMV729tAPhttvDjJtpfzZ3QWp6trE+4iUd2z2hjyIjB6\n" +
-                "8NtjXuBhmzRWDvfOgQFtscy23dgXNJ+J2jrXLyHxdo96qWax8E1Ri0FmiUjTJ7SG\n" +
-                "GXmyJyJhb1uMpgSrYqPp3IO58h774AunMVGhrx3jf3bWcGE=\n" +
-                "-----END CERTIFICATE-----\n"
-
-        mCertificate = try {
-            loadCertificateFromString(pemCert)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to load certificate", e)
-            throw e
-        }
-        Log.d(TAG, "Initialization complete")
-    }
-
-    override fun getPrivateKey(): PrivateKey = mPrivateKey
-
-    override fun getCertificate(): Certificate = mCertificate
-
-    override fun getDeviceName(): String = "nozza87@Auto-ADB"
+class AdbConnectionManager private constructor(context: Context) : AbsAdbConnectionManager() {
 
     companion object {
+        private const val TAG = "AdbConnectionManager"
+        private const val KEY_FILE_NAME = "adb_key"
+        private const val PUB_KEY_FILE_NAME = "adb_key.pub"
+        private const val CERT_FILE_NAME = "adb_cert"
+        private const val KEY_SIZE = 2048
+        private const val ALGORITHM_RSA = "RSA"
+        private const val ALGORITHM_SIGNATURE = "SHA512withRSA"
+        private const val CERT_VALIDITY_DAYS = 20 * 365L // 20 years
+
         @Volatile
         private var INSTANCE: AbsAdbConnectionManager? = null
 
         @Synchronized
         fun getInstance(context: Context): AbsAdbConnectionManager {
-            return INSTANCE ?: AdbConnectionManager(context).also { INSTANCE = it }
-        }
-
-        @Throws(Exception::class)
-        private fun loadPrivateKeyFromString(privateKeyPem: String): PrivateKey {
-            val privateKeyContent = privateKeyPem
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                .replace("\\s".toRegex(), "") // Remove all whitespace (including newlines)
-            val decodedKey = Base64.getDecoder().decode(privateKeyContent)
-            val keySpec = PKCS8EncodedKeySpec(decodedKey)
-            val keyFactory = KeyFactory.getInstance("RSA")
-            return keyFactory.generatePrivate(keySpec)
-        }
-
-        @Throws(Exception::class)
-        private fun loadCertificateFromString(certificateString: String): Certificate {
-            val certInputStream: InputStream = ByteArrayInputStream(certificateString.toByteArray(StandardCharsets.UTF_8))
-            val certFactory = CertificateFactory.getInstance("X.509")
-            return certFactory.generateCertificate(certInputStream)
+            return INSTANCE ?: AdbConnectionManager(context.applicationContext).also {
+                INSTANCE = it
+            }
         }
     }
+
+    private var privateKey: PrivateKey? = null
+    private var publicKey: PublicKey? = null
+    private var certificate: Certificate? = null
+
+    private val keyFile: File
+    private val pubKeyFile: File
+    private val certFile: File
+
+    init {
+        Log.d(TAG, "Initializing AdbConnectionManager")
+        api = Build.VERSION.SDK_INT
+
+        val filesDir = context.filesDir
+        keyFile = File(filesDir, KEY_FILE_NAME)
+        pubKeyFile = File(filesDir, PUB_KEY_FILE_NAME)
+        certFile = File(filesDir, CERT_FILE_NAME)
+
+        Log.i(TAG, "Key files directory: ${filesDir.absolutePath}")
+
+        try {
+            loadOrGenerateKeyPair()
+            Log.d(TAG, "Initialization complete")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to initialize AdbConnectionManager", e)
+            throw IllegalStateException("Failed to initialize ADB connection manager", e)
+        }
+    }
+
+    private fun loadOrGenerateKeyPair() {
+        Log.i(TAG, "Loading or generating key pair")
+
+        if (keyFile.exists() && pubKeyFile.exists() && certFile.exists()) {
+            try {
+                loadExistingKeys()
+                Log.i(TAG, "Successfully loaded existing keys and certificate")
+                return
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load existing keys, generating new ones", e)
+                // Delete corrupted files
+                safeDeleteFile(keyFile)
+                safeDeleteFile(pubKeyFile)
+                safeDeleteFile(certFile)
+            }
+        }
+
+        Log.i(TAG, "Generating new key pair and certificate")
+        generateNewKeyPairAndCert()
+    }
+
+    private fun loadExistingKeys() {
+        // Load private key
+        val privateKeyBytes = keyFile.readBytes()
+        val privateSpec = PKCS8EncodedKeySpec(privateKeyBytes)
+        val keyFactory = KeyFactory.getInstance(ALGORITHM_RSA)
+        privateKey = keyFactory.generatePrivate(privateSpec)
+        Log.i(TAG, "Private key loaded")
+
+        // Load public key
+        val publicKeyBytes = pubKeyFile.readBytes()
+        val publicSpec = X509EncodedKeySpec(publicKeyBytes)
+        publicKey = keyFactory.generatePublic(publicSpec)
+        Log.i(TAG, "Public key loaded")
+
+        // Load certificate
+        val certBytes = certFile.readBytes()
+        val cf = CertificateFactory.getInstance("X.509")
+        certificate = cf.generateCertificate(certBytes.inputStream()) as X509Certificate
+        Log.i(TAG, "Certificate loaded")
+    }
+
+    private fun generateNewKeyPairAndCert() {
+        try {
+            // Generate RSA key pair
+            Log.i(TAG, "Generating new RSA key pair")
+            val keyGen = KeyPairGenerator.getInstance(ALGORITHM_RSA)
+            keyGen.initialize(KEY_SIZE, SecureRandom.getInstance("SHA1PRNG"))
+            val keyPair = keyGen.generateKeyPair()
+            privateKey = keyPair.private
+            publicKey = keyPair.public
+            Log.i(TAG, "Key pair generated")
+
+            // Generate self-signed certificate
+            Log.i(TAG, "Generating self-signed certificate")
+            generateSelfSignedCertificate()
+            Log.i(TAG, "Certificate generated")
+
+            // Save keys atomically
+            Log.i(TAG, "Saving keys to files")
+            saveKeyToFile(keyFile, privateKey?.encoded)
+            saveKeyToFile(pubKeyFile, publicKey?.encoded)
+            saveKeyToFile(certFile, certificate?.encoded)
+            Log.i(TAG, "Keys and certificate saved successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to generate new keys", e)
+            // Clean up partial files
+            safeDeleteFile(keyFile)
+            safeDeleteFile(pubKeyFile)
+            safeDeleteFile(certFile)
+            throw e
+        }
+    }
+
+    private fun saveKeyToFile(file: File, data: ByteArray?) {
+        if (data == null) {
+            throw IllegalStateException("Cannot save null data to file: ${file.name}")
+        }
+
+        val tempFile = File(file.parentFile, "${file.name}.tmp")
+        try {
+            tempFile.writeBytes(data)
+            if (!tempFile.renameTo(file)) {
+                throw IOException("Failed to rename temp file to ${file.name}")
+            }
+        } catch (e: Exception) {
+            safeDeleteFile(tempFile)
+            throw e
+        }
+    }
+
+    private fun safeDeleteFile(file: File) {
+        try {
+            if (file.exists() && !file.delete()) {
+                Log.w(TAG, "Failed to delete file: ${file.name}")
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Exception while deleting file: ${file.name}", e)
+        }
+    }
+
+    private fun generateSelfSignedCertificate() {
+        val subject = "CN=Auto ADB"
+        val certificateExtensions = CertificateExtensions()
+
+        val pubKey = publicKey ?: throw IllegalStateException("Public key is null")
+        val privKey = privateKey ?: throw IllegalStateException("Private key is null")
+
+        certificateExtensions.set(
+            "SubjectKeyIdentifier",
+            SubjectKeyIdentifierExtension(KeyIdentifier(pubKey).identifier)
+        )
+
+        val x500Name = X500Name(subject)
+        val notBefore = Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000) // -24 hours
+        val notAfter = Date(System.currentTimeMillis() + CERT_VALIDITY_DAYS * 24 * 60 * 60 * 1000)
+
+        certificateExtensions.set(
+            "PrivateKeyUsage",
+            PrivateKeyUsageExtension(notBefore, notAfter)
+        )
+
+        val certificateValidity = CertificateValidity(notBefore, notAfter)
+        val x509CertInfo = X509CertInfo()
+
+        x509CertInfo.set("version", CertificateVersion(2))
+        x509CertInfo.set(
+            "serialNumber",
+            CertificateSerialNumber(Random().nextInt() and Int.MAX_VALUE)
+        )
+        x509CertInfo.set(
+            "algorithmID",
+            CertificateAlgorithmId(AlgorithmId.get(ALGORITHM_SIGNATURE))
+        )
+        x509CertInfo.set("subject", CertificateSubjectName(x500Name))
+        x509CertInfo.set("key", CertificateX509Key(pubKey))
+        x509CertInfo.set("validity", certificateValidity)
+        x509CertInfo.set("issuer", CertificateIssuerName(x500Name))
+        x509CertInfo.set("extensions", certificateExtensions)
+
+        val x509CertImpl = X509CertImpl(x509CertInfo)
+        x509CertImpl.sign(privKey, ALGORITHM_SIGNATURE)
+        certificate = x509CertImpl
+    }
+
+    override fun getPrivateKey(): PrivateKey {
+        return privateKey ?: throw IllegalStateException("Private key not initialized")
+    }
+
+    override fun getCertificate(): Certificate {
+        return certificate ?: throw IllegalStateException("Certificate not initialized")
+    }
+
+    override fun getDeviceName(): String = "Auto-ADB"
 }

@@ -153,7 +153,7 @@
                     android:minWidth="260dp"
                     android:minHeight="48dp"
                     android:nextFocusUp="@id/swiUsbDebugEnabled"
-                    android:nextFocusDown="@id/btnEnableLegacyADB"
+                    android:nextFocusDown="@id/btnPairWeb"
                     android:text="Wireless debugging"
                     android:textColor="@color/green_500" >
                 </Switch>
@@ -214,7 +214,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="- Allows wireless pairing on device (only required once unless revoked)"
+                android:text="- Allows wireless pairing on device (only required for pairing)"
                 android:textColor="@color/white"
                 android:textSize="10sp"
                 tools:ignore="SmallSp">
@@ -231,7 +231,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="- Must be disabled to prevent &quot;Auto ADB&quot; losing permissions"
+                android:text="- Should be disabled to prevent &quot;Auto ADB&quot; losing permissions"
                 android:textColor="@color/white"
                 android:textSize="10sp"
                 tools:ignore="SmallSp">
@@ -253,38 +253,83 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:gravity="center_horizontal"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 style="?android:attr/buttonBarStyle" >
-                <Button
-                    android:id="@+id/btnEnableLegacyADB"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="200dp"
-                    android:minHeight="48dp"
-                    android:focusable="true"
-                    android:focusableInTouchMode="false"
-                    android:nextFocusUp="@id/swiWirelessDebugEnabled"
-                    android:nextFocusDown="@id/btnDevOptions"
-                    android:text="Enable Legacy ADB"
-                    android:textColor="@color/white"
-                    android:background="@drawable/button_focused" >
-                    <requestFocus />
-                </Button>
-                <Button
-                    android:id="@+id/btnDevOptions"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:minWidth="200dp"
-                    android:minHeight="48dp"
-                    android:focusable="true"
-                    android:focusableInTouchMode="false"
-                    android:nextFocusUp="@id/btnEnableLegacyADB"
-                    android:nextFocusDown="@id/chkAutoStartEnabled"
-                    android:text="Developer options"
-                    android:textColor="@color/white"
-                    android:background="@drawable/button_focused" >
-                </Button>
+                    android:layout_marginEnd="16dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    style="?android:attr/buttonBarStyle" >
+                    <Button
+                        android:id="@+id/btnPairWeb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:nextFocusDown="@id/btnPairAccessibility"
+                        android:text="Pair via Web GUI"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_focused" >
+                        <requestFocus />
+                    </Button>
+                    <Button
+                        android:id="@+id/btnPairAccessibility"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:nextFocusUp="@id/btnPairWeb"
+                        android:nextFocusDown="@id/chkAutoStartEnabled"
+                        android:text="Pair via\nAccessibility Service"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_focused" >
+                    </Button>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    style="?android:attr/buttonBarStyle" >
+                    <Button
+                        android:id="@+id/btnEnableLegacyADB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:nextFocusDown="@id/btnDevOptions"
+                        android:text="Enable Legacy ADB"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_focused" >
+                        <requestFocus />
+                    </Button>
+                    <Button
+                        android:id="@+id/btnDevOptions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:minWidth="200dp"
+                        android:minHeight="48dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:nextFocusUp="@id/btnEnableLegacyADB"
+                        android:nextFocusDown="@id/chkAutoRefresh"
+                        android:text="Developer options"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_focused" >
+                    </Button>
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/layoutChecks"
@@ -311,7 +356,7 @@
                         android:focusableInTouchMode="false"
                         android:minWidth="200dp"
                         android:minHeight="48dp"
-                        android:nextFocusUp="@id/btnDevOptions"
+                        android:nextFocusUp="@id/btnPairAccessibility"
                         android:nextFocusDown="@id/chkAutoRunEnabled"
                         android:text="Start 'Auto ADB'\non system boot"
                         android:textColor="@color/white"

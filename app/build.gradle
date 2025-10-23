@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace 'au.com.inoahguy.autoadb'
-    compileSdk 34 // This is required, can't remeber why but something relies on it being 34
+    compileSdk 34 // This is required, can't remember why but something relies on it being 34
     
     defaultConfig {
         applicationId "au.com.inoahguy.autoadb"
-        minSdk 30 // This is required, can't remeber why but something relies on it being 30
-        targetSdk 34 // This is required, can't remeber why but something relies on it being 34
-        versionCode 200
-        versionName "2.0.0.beta"
+        minSdk 30 // This is required, can't remember why but something relies on it being 30
+        targetSdk 34 // This is required, can't remember why but something relies on it being 34
+        versionCode 220
+        versionName "2.2.0.beta"
     }
 
     buildTypes {
@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+
     //noinspection GradleDependency
     implementation 'androidx.core:core-ktx:1.10.1'
     //implementation 'androidx.core:core-ktx:1.17.0'
@@ -72,11 +73,15 @@ dependencies {
     implementation 'com.github.MuntashirAkon:sun-security-android:1.1' // Remote: https://github.com/MuntashirAkon/sun-security-android
 
     // Uncomment the line below if you want to use the custom conscrypt.
-    //implementation 'org.conscrypt:conscrypt-android:2.5.3'
+    implementation("org.conscrypt:conscrypt-android:2.5.3")
 
     // Bypass hidden API if you want to use Android default conscrypt. It also requires additional steps.
     // See https://github.com/LSPosed/AndroidHiddenApiBypass to find out more about this.
     // Comment out the line below if you do not need this.
     //implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:+'
-    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
+    //implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
+
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
+    //noinspection NewerVersionAvailable
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }

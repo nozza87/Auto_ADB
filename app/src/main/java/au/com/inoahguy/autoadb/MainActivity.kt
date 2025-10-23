@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.conscrypt.BuildConfig
 import java.lang.Thread.sleep
 import java.net.InetAddress
 import java.util.concurrent.CountDownLatch
@@ -41,7 +42,10 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 @SuppressLint("SetTextI18n")
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), GlobalSettingsObserver.SettingsChangeCallback {
+    override fun onSettingsChanged() {
+        updateToggles()
+    }
     @Suppress("PropertyName")
     val TAG = "<MainActivity>"
 
@@ -60,6 +64,8 @@ class MainActivity : AppCompatActivity() {
     private var txtAccessibilityService: TextView? = null
     private var txtAutoRevoke: TextView? = null
 
+    private var uiBtnPairWeb: Button? = null
+    private var uiBtnPairAccessibility: Button? = null
     private var uiBtnEnableLegacyADB: Button? = null
     private var uiBtnDevOptions: Button? = null
     private var uiChkAutoRunEnabled: CheckBox? = null
@@ -74,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     private var mFail = ""
     private var mAppHasFocus: Boolean = true
     private var mWaitForPopup: Boolean = false
-    private var isAccessibilityServiceEnabled = false 
+    private var isAccessibilityServiceEnabled = false
 
     private fun enableStrictMode() {
         Log.w("enableStrictMode()", "** BEGIN **")
@@ -144,6 +150,10 @@ class MainActivity : AppCompatActivity() {
         uiChkAutoClose = findViewById(R.id.chkAutoClose)
         uiChkAutoClose?.isChecked = mSharedPreferences.getBoolean("chkAutoClose" , false)
 
+        uiBtnPairWeb = findViewById(R.id.btnPairWeb)
+        uiBtnPairWeb?.text = Html.fromHtml("<b>" + "PAIR VIA WEB GUI" + "</b>", Html.FROM_HTML_MODE_LEGACY)
+        uiBtnPairAccessibility = findViewById(R.id.btnPairAccessibility)
+
         uiBtnDevOptions = findViewById(R.id.btnDevOptions)
         uiBtnDevOptions?.text = Html.fromHtml("<b>" + "DEVELOPER OPTIONS" + "</b><br/><small><small>" + "hold for app settings" + "</small></small>", Html.FROM_HTML_MODE_LEGACY)
         uiBtnEnableLegacyADB = findViewById(R.id.btnEnableLegacyADB)
@@ -194,6 +204,14 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     enableWirelessDebugging(0)
                 }
+            }
+
+            uiBtnPairWeb!!.setOnClickListener {
+                pairWeb()
+            }
+
+            uiBtnPairAccessibility!!.setOnClickListener {
+                pairAccessibility()
             }
 
             uiBtnEnableLegacyADB!!.setOnClickListener {
@@ -271,7 +289,7 @@ class MainActivity : AppCompatActivity() {
         viewModel?.watchConnectAdb()?.observe(this) { isConnected ->
             if (isConnected) {
                 Log.d("init()","Connected to ADB")
-                showToast("Connected to ADB", Toast.LENGTH_SHORT)
+                showToast("Connected to ADB")
                 uiSetStatusText("Connected to ADB")
 
                 Log.d("init()", "WRITE_SECURE_SETTINGS")
@@ -306,22 +324,29 @@ class MainActivity : AppCompatActivity() {
                 uiRefreshInfo()
             } else {
                 Log.d("init()","Disconnected from ADB")
-                //showToast("ADB Disconnected", Toast.LENGTH_SHORT)
+                //showToast("ADB Disconnected")
             }
         }
 
+        /*
         viewModel?.watchPairAdb()?.observe(this) { isPaired ->
             if (isPaired) {
-                showToast("Pairing successful", Toast.LENGTH_SHORT)
+                Log.i(TAG, "Pairing successful!")
+                showToast("Pairing successful")
+                showToast("Please return to \"Auto ADB\" and\npress [ENABLE LEGACY MODE].", Toast.LENGTH_LONG)
             } else {
-                showToast("Pairing failed", Toast.LENGTH_SHORT)
+                Log.w(TAG, "Pairing failed!")
+                showToast("Pairing failed")
             }
         }
+        */
 
         viewModel?.watchAskPairAdb()?.observe(this) { displayDialog ->
             if (displayDialog) {
                 //pairAdb()
-                initiateAdbPairingWithAccessibilityService()
+                //initiateAdbPairingWithAccessibilityService()
+                showToast("Pairing required")
+                uiSetStatusText("Pairing required")
             }
         }
 
@@ -343,7 +368,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()
-                showToast("Could not open Accessibility Settings.", Toast.LENGTH_SHORT)
+                showToast("Could not open Accessibility Settings.")
             }
             return
         }
@@ -353,7 +378,7 @@ class MainActivity : AppCompatActivity() {
         // The accessibility service will be watching for the pairing code.
         uiBtnDevOptions?.performClick() // This opens Developer Options
 
-        showToast("Navigate to 'Developer options -> Wireless debugging -> Pair device with pairing code'.", Toast.LENGTH_LONG)
+        showToast("Navigate to 'Developer options -> Wireless debugging\n-> Pair device with pairing code'.", Toast.LENGTH_LONG)
     }
 
     // Function to check if Accessibility Service is enabled
@@ -520,13 +545,24 @@ class MainActivity : AppCompatActivity() {
                     Settings.Global.ADB_ENABLED,
                     state
                 )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                uiSetStatusText("Failed to toggle USB debugging, check permissions!")
-            } finally {
                 uiSetInfoText("waiting...")
                 //enableBtns(true)
                 updateToggles()
+            }
+            catch (ex: SecurityException) {
+                ex.printStackTrace()
+                uiSetStatusText("Failed to toggle USB debugging, check permissions!")
+                enableBtns(true)
+            }
+            catch (ex: Exception) {
+                ex.printStackTrace()
+                uiSetStatusText("Failed to toggle USB debugging!")
+                enableBtns(true)
+            }
+            finally {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    uiSwiUsbDebugEnabled?.isChecked = (Settings.Global.getInt(applicationContext.contentResolver, Settings.Global.ADB_ENABLED, 0) == 1)
+                }, 500) // Delay to give time
             }
         }
     }
@@ -538,24 +574,58 @@ class MainActivity : AppCompatActivity() {
             enableBtns(false)
             uiSetStatusText("Toggling Wireless debugging ${if (state == 1) "on" else "off"}...")
             try {
-                lastWirelessState = -1
                 Settings.Global.putInt(
                     applicationContext.contentResolver,
                     "adb_wifi_enabled",
                     state
                 )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                uiSetStatusText("Failed to toggle wireless debugging, check permissions!")
-            } finally {
                 uiSetInfoText("waiting...")
                 //enableBtns(true)
                 updateToggles()
+            }
+            catch (ex: SecurityException) {
+                ex.printStackTrace()
+                uiSetStatusText("Failed to toggle Wireless debugging, check permissions!")
+                enableBtns(true)
+            }
+            catch (ex: Exception) {
+                ex.printStackTrace()
+                uiSetStatusText("Failed to toggle wireless debugging!")
+                enableBtns(true)
+            }
+            finally {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    uiSwiWirelessDebugEnabled?.isChecked = (Settings.Global.getInt(applicationContext.contentResolver, "adb_wifi_enabled", 0) == 1)
+                }, 500) // Delay to give time
             }
         }
     }
 
     private var backgroundJob: Job? = null
+
+    private val pairWebLock: Lock = ReentrantLock()
+    internal fun pairWeb() = pairWebLock.withLock {
+        Log.d("pairWeb()", "** BEGIN **")
+        uiBtnPairWeb?.text = Html.fromHtml("<b>" + "PAIR VIA WEB GUI" + "</b><br/><small><small>" + "http://${getDeviceIP(applicationContext)}:8080" + "</small></small>", Html.FROM_HTML_MODE_LEGACY)
+
+        val serviceIntent = Intent(this, PairWebService::class.java)
+        startService(serviceIntent)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            uiBtnPairWeb?.text = Html.fromHtml("<b>" + "PAIR VIA WEB GUI" + "</b>", Html.FROM_HTML_MODE_LEGACY)
+        }, 60_000L)
+        Log.d("pairWeb()", "** END **")
+    }
+
+    private val pairAccessibilityLock: Lock = ReentrantLock()
+    internal fun pairAccessibility() = pairAccessibilityLock.withLock {
+        Log.d("pairAccessibility()", "** BEGIN **")
+
+        initiateAdbPairingWithAccessibilityService()
+
+        Log.d("pairAccessibility()", "** END **")
+    }
+
     private val enabeLegacyAdbLock: Lock = ReentrantLock()
     internal fun enableLegacyADB() = enabeLegacyAdbLock.withLock {
         Log.d("connectLocalADB()", "** BEGIN **")
@@ -602,7 +672,7 @@ class MainActivity : AppCompatActivity() {
     }
     data class RefreshInfoResult(val blOK: Boolean? = false, val blLegacyOK: Boolean? = false, val strLegacyIPAddress: String? = "", val intLegacyPort: Int? = -1, val blWirelessOK: Boolean? = false, val strWirelessIPAddress: String? = "", val intWirelessPort: Int? = -1)
     private val refreshInfoLock: Lock = ReentrantLock()
-    private fun refreshInfo(silent: Boolean = false, timeoutMillis: Long = 3000L): RefreshInfoResult {
+    private fun refreshInfo(silent: Boolean = false, timeoutMillis: Long = 3_000L): RefreshInfoResult {
         Log.d("refreshInfo()", "** BEGIN ** silent= $silent")
 
         refreshInfoLock.lock() // Acquire lock
@@ -672,12 +742,45 @@ class MainActivity : AppCompatActivity() {
                 legacyOK = false
                 Log.w("adbMdnsDiscover()", "Could not find any valid legacy host address or port")
             }
-            val wirelessHost = atomicWirelessHostAddress.get()
-            val wirelessPort = atomicWirelessPort.get()
+            var wirelessHost = atomicWirelessHostAddress.get()
+            var wirelessPort = atomicWirelessPort.get()
             var wirelessOK = true
             if (wirelessHost == null || wirelessPort == -1) {
                 wirelessOK = false
                 Log.e("adbMdnsDiscover()", "Could not find any valid wireless host address or port")
+                /*
+                Log.e("adbMdnsDiscover()", "Could not find any valid wireless host address or port via mDNS, Attempting scan...")
+
+                val commonBases =
+                    intArrayOf(37000, 38000, 39000, 40000, 41000, 42000, 35000, 36000, 43000, 44000)
+
+                for (base in commonBases) {
+                    Log.d(
+                        "adbScanDiscover()","Checking range " + base + "-" + (base + 999) + "..."
+                    )
+                    var offset = 0
+                    val manager = AdbConnectionManager.getInstance(application)
+                    while (offset < 1000) {
+                        val port = base + offset
+                        try {
+                            if (manager.connect(port)) {
+                                Log.i(
+                                    "adbScanDiscover()",
+                                    "Found ADB on port: $port"
+                                )
+                                wirelessHost = getDeviceIP(applicationContext)
+                                wirelessPort = port
+                                wirelessOK = true
+                                break
+                            }
+                        }
+                        catch (e: Exception) {
+                            // Do Nothing
+                        }
+                        offset += 5
+                    }
+                }
+                */
             }
 
             var blOK = true
@@ -706,7 +809,9 @@ class MainActivity : AppCompatActivity() {
 
             if (legacyOK && uiChkAutoClose!!.isChecked) {
                 Log.e("refreshInfo()", "Returning to Launcher")
-                finishAffinity()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    finishAffinity()
+                }, 3000) // Delay to give time to disable this setting
             }
 
 
@@ -731,6 +836,9 @@ class MainActivity : AppCompatActivity() {
 
             uiSwiUsbDebugEnabled?.isEnabled = state
             uiSwiWirelessDebugEnabled?.isEnabled = state
+
+            uiBtnPairWeb?.isEnabled = state
+            uiBtnPairAccessibility?.isEnabled = state
 
             uiBtnEnableLegacyADB?.isEnabled = state
             uiBtnDevOptions?.isEnabled = state
